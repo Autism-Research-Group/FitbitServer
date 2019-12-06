@@ -1,14 +1,14 @@
 const express = require('express')
 const app = express()
 const authenticationRoute = require('./routes/authentication')
-const dataRoutes = require('./routes/data')
+const dataRoutes = require('./routes/android')
 const port = 3000
 
 
 
 app.use(express.json()) // Express JSON parser
 app.use('/auth', authenticationRoute) // routes specifically for OAuthentication
-//app.use('/data', dataRoutes) // routes specifically for incoming data
+app.use('/android', dataRoutes) // routes specifically for incoming android requests
 
 
 
