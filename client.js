@@ -10,12 +10,23 @@ function Client() {
     this.refresh_token = null
 }
 
+/**
+ * Setters and Getters below
+ */
+
 Client.prototype.setAccessToken = function(access_token) {
-    this.access_token = token
+    this.access_token = access_token
+}
+Client.prototype.getAccessToken = function() {
+    return this.access_token
 }
 
 Client.prototype.setRefreshToken = function(refresh_token) {
     this.refresh_token = refresh_token
+}
+
+Client.prototype.getRefreshToken = function() {
+    return this.refresh_token
 }
 
 Object.seal(Client) // Seal the object so no more properties can be added
@@ -23,4 +34,5 @@ Object.seal(Client) // Seal the object so no more properties can be added
 
 
 const client = new Client()
+
 module.exports = client
