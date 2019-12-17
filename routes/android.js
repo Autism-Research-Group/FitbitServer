@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const android = require('../controllers/response')
+const android = require('../controllers/androidResponse')
 
 
 router.get('/profile', android.profile)
-router.get('/heartRate', android.heartRate)
 
 module.exports = router

@@ -32,15 +32,20 @@ function callback(req, res) {
       client.setAccessToken(response.access_token)
       client.setRefreshToken(response.refresh_token)
 
-      // Add the userid to the user list
-      userList.push(new User('Joshua Schappel', response.user_id))
-
+      //userList.push(new User('Joshua Schappel', response.user_id))
+     
 		  // use the access token to fetch the user's profile information
       fitbitClientCall.get("/profile.json", response.access_token).then(response => {
-        testObj.profileData = response[0]
 
-        //console.log(response[1]) //This is the users data
-        res.sendFile(path.join(__dirname + '/welcome.html'))
+        const userData = response[0].user
+        const username = userData.fullName
+        const userId = userData.encodedId
+
+        // Add the user to the user list
+        userList.push(new User(username, userId))
+       
+        //render the welcome message
+        res.render('welcome', { user: username })
       }).catch(err => {
         console.log(err)
         res.status(err.status).send(err)
@@ -56,7 +61,6 @@ function callback(req, res) {
 module.exports = {
     authorize,
     callback,
-    testObj,
 }
 
 
