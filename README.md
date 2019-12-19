@@ -13,7 +13,7 @@
    - /heartrate
    - /detailedHeartrate
  
- #### Endpoints indepth
+ #### Endpoints In-depth
  ##### /auth
  - These endpoints are responsible for dealing witht the Fitbit O-Auth 2.0 protocal.
  - /authorize retrieves a special key from the fitbit server that must be used for all fitbit API requests.
