@@ -19,14 +19,18 @@
                 <% }) %>
             </thead>
             <tbody>
-                <% tableData.forEach( dataSet => { %>
-                    <% dataSet.value.heartRateZones.forEach( zone =>{ %>
-                        <tr style="border-bottom:1pt solid black">
-                            <td> <%= dataSet.dateTime %></td>
-                            <td> <%= zone.min %></td>
-                            <td> <%= zone.max %></td>
-                            <td> <%= zone.name %></td>
-                        </tr>
+                <% tableData.forEach( userSet => { %>
+                    <% userSet['activities-heart'].forEach( dataSet => { %>
+                        <% dataSet.value.heartRateZones.forEach( zone =>{ %>
+                            <tr style="border-bottom:1pt solid black">
+                                <td> <%= userSet.user.username %></td>
+                                <td> <%= userSet.user.userID %></td>
+                                <td> <%= dataSet.dateTime %></td>
+                                <td> <%= zone.min %></td>
+                                <td> <%= zone.max %></td>
+                                <td> <%= zone.name %></td>
+                            </tr>
+                        <% }) %>
                     <% }) %>    
                 <% }) %>
             </tbody>

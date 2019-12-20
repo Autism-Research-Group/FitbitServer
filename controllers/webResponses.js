@@ -2,7 +2,7 @@ const userList = require('../userList')
 const fetch = require('node-fetch')
 const Client = require('../client')
 
-const RANGE = '1m' // 1 month
+const DEFAULT_RANGE = '1w' // The default value for range
 
 
 /**
@@ -11,39 +11,53 @@ const RANGE = '1m' // 1 month
  */
 function heartRate(req, res) {
 
-    const range = req.query.range // get the range parameter
-
-    if(range == undefined){
-        res.send("Please add a rage parameter to the GET request")
+    // Make sure that there are users to fetch. If there are not any available users then
+    //  alert the client
+    if(userList.length === 0) {
+        return res.status(400).send("There are not any available Users. Please add a user")
     }
 
-    if(userList.length > 0){
-        const userId = userList[0].userID
-        const date = getCurrentDate()
-        const token = Client.access_token
+    let range // get the range parameter
 
-        //const b = Buffer.from(token).toString('base64')
-        //console.log(b)
-
-        fetch(`https://api.fitbit.com/1/user/${userId}/activities/heart/date/${date}/${range}.json`, {
-            method: 'GET',
-            headers: {
-                'Authorization': ' Bearer ' + token
-            }
-        })
-        .then( response => response.json())
-        .then( data => {
-            
-            
-            const headers = ["DateTime", "Min", "Max", "Name"]
-            const tableData = data["activities-heart"]
-
-
-            res.render('heartrate', { headers, tableData })
-           // res.send(data["activities-heart"])
-        })
-        .catch(error => console.log(error))
+    // If the range is undefined set the range to the default range
+    if(req.query.range == undefined){
+        range = DEFAULT_RANGE
+    } 
+    else {
+        range = req.query.range
     }
+
+    const date = getCurrentDate()
+    const token = Client.access_token
+
+    //const b = Buffer.from(token).toString('base64')
+    //console.log(b)
+    Promise.all(
+        userList.map( User => {
+            return fetch(`https://api.fitbit.com/1/user/${User.userID}/activities/heart/date/${date}/${range}.json`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': ' Bearer ' + token
+                }
+            })
+            .then( response => response.json())
+            .then( data => {
+                data.user = User // Add the user to the data
+                return data
+            })
+        })
+    )
+    .then( tableData => {
+        // Headers for the html table
+        const headers = ["User Name", "UserId", "DateTime", "Min", "Max", "Name"]
+
+        res.render('heartrate', { headers, tableData })
+
+    })
+    .catch(error => {
+        res.send(400)
+        res.send(`An error occurred: ${error}`)
+    })
 }
 
 
