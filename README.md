@@ -38,6 +38,6 @@ When a user is added via the /auth endpoints, a User object is created and added
 
 ### Future Additions
 - [ ] Add a database to store the requested data in (Must look into FERPA requirements)
-- [ ] Show which users data is being displayed for clarity
+- [X] Show which users data is being displayed for clarity
 - [ ] Make android appliction that can also show data and store data in SQLite
 - [ ] Look into ways that a fibit can track a users location
