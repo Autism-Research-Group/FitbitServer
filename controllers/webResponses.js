@@ -2,8 +2,6 @@ const userList = require('../userList')
 const fetch = require('node-fetch')
 const Client = require('../client')
 
-const RANGE = '1m' // 1 month
-
 
 /**
  * This function returns an html file containing the heart rate data rendered
