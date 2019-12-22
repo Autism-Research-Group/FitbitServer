@@ -6,6 +6,11 @@ function User(username, id) {
     this.userID = id
 }
 
+// Determines if two user objects are equal to another
+User.prototype.equals = function(user) {
+    return this.username === user.username && this.userID === user.userID
+}
+
 Object.freeze(User) // Freeze the object so that it cannot be modified
 
 
