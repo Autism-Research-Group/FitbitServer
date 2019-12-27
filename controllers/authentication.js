@@ -2,13 +2,10 @@ const client = require("../client")
 const FitBitApiClient = require("fitbit-node")
 const fitbitClientCall = new FitBitApiClient({clientId: client.id, clientSecret: client.secrete, apiVersion: client.version})
 const fetch = require('node-fetch')
-const path = require('path')
 let userList = require('../userList')
 const User = require('../user')
 
 
-
-const testObj = {}
 
 /**
  * Sends the initial call to start the O Authentication 2.0 process with the applications credentials 
@@ -23,23 +20,43 @@ function authorize(req, res) {
  */
 async function add(req, res) {
 
-  // Get the users information
-  const userStatus = await checkIfUserIDExists(req.body.id)
+  try {
+    // Get the users information
+    const userStatus = await checkIfUserIDExists(req.body.id)
 
-  // If the user does not exist then tell the client
-  // Otherwise see if the user already is registered
-  if(userStatus.status === false) return res.status(400).send(userStatus.msg)
-
-  const newUser = new User(userStatus.username, userStatus.userID) // Construct a new user object with the given params
-  // Check if the user is already in the user list
-  for(user of userList) {
-    if(user.equals(newUser)){
-      return res.status(400).send("The current user already exists.")
+    const newUser = new User(userStatus.username, userStatus.userID) // Construct a new user object with the given params
+    // Check if the user is already in the user list
+    for(user of userList) {
+      if(user.equals(newUser)){
+        return res.status(400).send("The current user already exists.")
+      }
     }
+    
+    userList.push(newUser)
+    res.status(200).send("User successfully added.")
+
+  } catch(error) {
+    res.status(400).send(error.msg)
   }
+}
+
+
+/**
+ * Removes a userID from the userList
+ */
+function remove(req, res) {
+  const id = req.body.id
+
+  const index = existsInUserList(id)
   
-  userList.push(newUser)
-  res.status(200).send("User successfully added.")
+  if(index >= 0) {
+    userList.splice(index, 1)
+    return res.status(200).send("User was successfully removed.")
+  }
+
+  else {
+    return res.status(200).send("User currently does not exist.")
+  }
 }
 
 
@@ -84,7 +101,14 @@ function callback(req, res) {
 }
 
 
-
+/**
+ * Determines if the supplied userID is valid. If it is then a promise containing a obj with the following is returned:
+ * - username: The full name of the account
+ * - userID: The accounts userID
+ * 
+ * If the userID is not valid then the promise is rejected with the following object
+ * - msg: the error message
+ */
 function checkIfUserIDExists(user_id) {
   const token = client.access_token
 
@@ -96,19 +120,36 @@ function checkIfUserIDExists(user_id) {
   })
   .then(response => response.status === 200 ? response.json() : Promise.reject("Invalid userID."))
   .then( ({ user }) =>  {
-    return { status: true, username: user.fullName, userID: user.encodedId }
+    return { username: user.fullName, userID: user.encodedId }
   })
   .catch(error => {
-    return { status: false, msg: error}
+    return Promise.reject({ msg: error})
   })
 }
+
+
+
+/**
+ * Returns the index of the userID located in the userList. If the id is not present in the list
+ *   then -1 is returned instead.
+ */
+function existsInUserList(userID) {
+  for(i=0; i < userList.length; i++) {
+    const user = userList[i]
+    if(user.userID === userID){
+      return i
+    }
+  }
+  return -1
+}
+
+
 
 
 
 module.exports = {
     authorize,
     callback,
-    add
+    add,
+    remove,
 }
-
-
