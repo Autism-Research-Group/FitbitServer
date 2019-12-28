@@ -3,7 +3,8 @@ const router = express.Router()
 const web = require('../controllers/webResponses')
 
 
-router.get('/heartrate', web.heartRate)
-router.get('/detailedHeartrate', web.detailedHeartRate)
+router.get('/heartrate/period/all', web.heartRateAllPeriod)
+router.get('/heartrate/period/single', web.heartRateSinglePeriod)
+//router.get('/detailedHeartrate', web.detailedHeartRate)
 
 module.exports = router
