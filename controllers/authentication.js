@@ -1,9 +1,9 @@
-const client = require("../client")
+const client = require("../models/client")
 const FitBitApiClient = require("fitbit-node")
 const fitbitClientCall = new FitBitApiClient({clientId: client.id, clientSecret: client.secrete, apiVersion: client.version})
 const fetch = require('node-fetch')
-let userList = require('../userList')
-const User = require('../user')
+let userList = require('../models/userList')
+const User = require('../models/user')
 
 
 

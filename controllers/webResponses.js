@@ -1,6 +1,6 @@
-const userList = require('../userList')
+const userList = require('../models/userList')
 const fetch = require('node-fetch')
-const Client = require('../client')
+const Client = require('../models/client')
 
 const DEFAULT_RANGE = '1w' // The default value for range
 

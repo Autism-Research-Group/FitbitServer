@@ -1,4 +1,4 @@
-const User = require('../user')
+const User = require('../models/user')
 
 
 describe("Testing User equals function", () => {
