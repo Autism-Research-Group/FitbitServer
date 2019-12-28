@@ -13,6 +13,12 @@
    - /profile
  - /web
    - /heartrate
+      - /period
+         - /all
+         - /user
+      - /range
+         - /all
+         - /user
    - /detailedHeartrate
  
  #### Endpoints In-depth
