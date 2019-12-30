@@ -21,7 +21,7 @@
             <tbody>
                 <% tableData['activities-heart'].forEach( dataSet => { %>
                         <% dataSet.value.heartRateZones.forEach( zone =>{ %>
-                            <tr style="border-bottom:1pt solid black">
+                            <tr>
                                 <td> <%= tableData.user.userID %></td>
                                 <td> <%= dataSet.dateTime %></td>
                                 <td> <%= zone.min %></td>

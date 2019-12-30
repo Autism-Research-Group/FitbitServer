@@ -6,7 +6,7 @@ const DEFAULT_PERIOD = '1w'
 /**
  * Fetches heart rate data for all users in the given list. The data is appended together in an object and
  *  returned as a promise.
- * @param {array-of-string} userList the array of userID's
+ * @param {array-of-Users} userList the array of userID's
  * @param {string} period The range for which data will be returned. Options are 1d, 7d, 30d, 1w, 1m. **OPTIONAL ARGUMENT**
  */
 function fetchAllHeartRatesPeriod(userList, period) {
@@ -17,17 +17,14 @@ function fetchAllHeartRatesPeriod(userList, period) {
             return fetchSingularHeartRatePeriod(User, range)
         })
     )
-    .then( tableData => {
-        return tableData
-    })
     .catch(error => {
-        Promise.reject(error)
+        Promise.reject({ msg: error })
     })
 }
 
 
 /**
- * Fetches data for a single user
+ * Fetches data for a single user using a period
  * @param {User} user the user object that you wish to fetch data from
  * @param {string} period The range for which data will be returned. Options are 1d, 7d, 30d, 1w, 1m. **OPTIONAL ARGUMENT**
  */
@@ -42,7 +39,7 @@ function fetchSingularHeartRatePeriod(user, period) {
         'Authorization': ' Bearer ' + token
         }
     })
-    .then( response => response.json())
+    .then( response => response.status === 200 ? response.json() : Promise.reject(response.statusText) )
     .then( data => {
         data.user = user // Add the user to the data
         return data
@@ -51,12 +48,42 @@ function fetchSingularHeartRatePeriod(user, period) {
 }
 
 
+/**
+ * Fetches the data for all users in the userList
+ * @param {array-of-Users} userList An array of User objects that you wish to get data from
+ * @param {string} startDate The starting date of the data period (yyyy-MM-dd)
+ * @param {endDate} endDate The ending date of the data period (yyyy-MM-dd)
+ */
 function fetchAllHeartRateRange(userList, startDate, endDate) {
-    //TODO: Add implementation
+    return Promise.all(
+        userList.map( user => {
+            return fetchSingleHeartRateRange(user, startDate, endDate)
+        })
+    )
+    .catch( error => Promise.reject({ msg: error }) )
 }
 
+/**
+ * Fetches data for a single user using a Range
+ * @param {User} user A User object containing the users ID
+ * @param {string} startDate The starting date of the data period (yyyy-MM-dd)
+ * @param {string} endDate The ending date of the data period (yyyy-MM-dd)
+ */
 function fetchSingleHeartRateRange(user, startDate, endDate) {
-    //TODO: Add implementation
+    const token = Client.access_token // Access token needed for API calls
+    
+    return fetch(`https://api.fitbit.com/1/user/${user.userID}/activities/heart/date/${startDate}/${endDate}.json`, {
+        method: 'GET',
+        headers: {
+            'Authorization': ' Bearer ' + token
+        }
+    })
+    .then( response => response.status === 200 ? response.json() : Promise.reject(response.statusText) )
+    .then( data => {
+        data.user = user
+        return data
+    })
+    .catch( error => Promise.reject({ msg: error }))
 }
 
 
@@ -94,5 +121,7 @@ function detailedHeartRate(req, res) {
 
 module.exports = {
     fetchSingularHeartRatePeriod,
-    fetchAllHeartRatesPeriod
+    fetchAllHeartRatesPeriod,
+    fetchSingleHeartRateRange,
+    fetchAllHeartRateRange,
 }
