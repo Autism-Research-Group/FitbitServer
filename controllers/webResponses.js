@@ -34,7 +34,10 @@ async function heartRateSinglePeriod(req, res) {
     if(req.query.user === undefined) {
         return res.status(400).json({ status: "error", msg: "userID never specified. Please specify a valid userID." })
     }
-    const user = {userID: req.query.user} // Wrap the args in a user object so the fetch function can get the data
+    const user = getUserIndex(req.query.user)
+    if (user === null) {
+        return res.status(400).json({ success: false, msg: `User ${req.query.user} is not registered` })
+    }
 
     try{
         const tableData = await heartRateFetch.fetchSingularHeartRatePeriod(user, req.query.range)
@@ -89,7 +92,10 @@ async function heartRateSingleDate(req, res) {
         return res.status(400).json({ status: "error", msg: "The start, end date, or user was not supplied." })
     }
 
-    const user = {userID: req.query.user}
+    const user = getUserIndex(req.query.user)
+    if (user === null) {
+        return res.status(400).json({ success: false, msg: `User ${req.query.user} is not registered` })
+    }
     try {
         const tableData = await heartRateFetch.fetchSingleHeartRateRange(user, startDate, endDate)
         const headers = ["User Name", "UserId", "DateTime", "Min", "Max"]
@@ -97,6 +103,18 @@ async function heartRateSingleDate(req, res) {
     } catch(error) {
         res.status(400).json({ status: "error", msg:`${error.msg}` })
     }
+}
+
+
+
+function getUserIndex(userID) {
+    for( i = 0; i < userList.length; i++) {
+        const user = userList[i]
+        if(user.userID === userID) {
+            return user
+        } 
+    }
+    return null
 }
 
 module.exports = {
