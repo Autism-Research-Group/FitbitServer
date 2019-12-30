@@ -7,10 +7,11 @@
  - /auth
    - /authorize
    - /callback
-   - /add
-   - /remove
  - /android
    - /profile
+ - /database
+   - /remove
+   - /allUsers
  - /web
    - /heartrate
       - /period
@@ -24,15 +25,19 @@
  #### Endpoints In-depth
  ##### /auth
  - These endpoints are responsible for dealing with the Fitbit O-Auth 2.0 protocal.
- - /authorize retrieves a special key from the fitbit server that must be used for all fitbit API requests.
+ - /authorize adds a user to the database after it has been authenticated with Fitbit's API
  - /callback is the endpoint that the fitbit server will send all responses to.
- - /add adds a user to the database if the userID given is valid and does not already exist.
- - /remove removes a user from the database.
+ 
  
  ##### /android
  - These endpoints deal with any calls that the android application will make.
  - /profile currently is just a test endpoint that sends the message "Hello android" to the android device.
  - As the android application is built out more endpoints will be added.
+ 
+ ##### /database
+ - These endpoints deal with editing and getting data that is stored in the database
+ - /remove removes a user from the database.
+ - /allUsers returns a list of all users in the database (ussername, userID)
  
  ##### /web
  - These endpoints are used when a user wants to view data in html tables.
