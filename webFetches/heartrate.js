@@ -1,4 +1,3 @@
-const Client = require('../models/client')
 const { getCurrentDate } = require('../utils/date')
 const fetch = require('node-fetch')
 const DEFAULT_PERIOD = '1w'
@@ -31,7 +30,7 @@ function fetchAllHeartRatesPeriod(userList, period) {
 function fetchSingularHeartRatePeriod(user, period) {
     const date = getCurrentDate() // The current date
     const range = period !== undefined ? period : DEFAULT_PERIOD // The period to fetch data from
-    const token = Client.access_token // The access token needed for API calls
+    const token = user.access_token // The access token needed for API calls
 
     return fetch(`https://api.fitbit.com/1/user/${user.userID}/activities/heart/date/${date}/${range}.json`, {
         method: 'GET',
@@ -70,7 +69,7 @@ function fetchAllHeartRateRange(userList, startDate, endDate) {
  * @param {string} endDate The ending date of the data period (yyyy-MM-dd)
  */
 function fetchSingleHeartRateRange(user, startDate, endDate) {
-    const token = Client.access_token // Access token needed for API calls
+    const token = user.access_token // Access token needed for API calls
     
     return fetch(`https://api.fitbit.com/1/user/${user.userID}/activities/heart/date/${startDate}/${endDate}.json`, {
         method: 'GET',
@@ -91,29 +90,6 @@ function fetchSingleHeartRateRange(user, startDate, endDate) {
  // TODO: Detailed Function
 function detailedHeartRate(req, res) {
 
-    if(userList.length > 0) {
-
-        const userId = userList[0].userID
-        const token = Client.access_token
-        const date = getCurrentDate()
-
-      
-        fetch(`https://api.fitbit.com/1/user/${userId}/activities/heart/date/${date}/1d/1sec/time/00:00/00:01.json`, {
-            method: 'GET',
-            headers: {
-                'Authorization': ' Bearer ' + token
-            }
-        })
-        .then( response => response.json())
-        .then( data => {
-            
-            res.send(data)
-        })
-        .catch(error => console.log(error))
-    } 
-    else {
-        res.send('Please authenticate a user first')
-    }
 }
 
 
