@@ -24,7 +24,7 @@ function remove(req, res) {
  * Returns all the Users in the userList
  */
 function allUsers(req, res) {
-  return res.json(userList.map( user => user.shortHand() ))
+  return res.json({ userList: userList.map( user => user.shortHand() )})
 }
 
   

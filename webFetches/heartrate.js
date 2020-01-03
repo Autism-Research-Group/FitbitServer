@@ -31,7 +31,7 @@ function fetchSingularHeartRatePeriod(user, period) {
     const date = getCurrentDate() // The current date
     const range = period !== undefined ? period : DEFAULT_PERIOD // The period to fetch data from
     const token = user.access_token // The access token needed for API calls
-
+    
     return fetch(`https://api.fitbit.com/1/user/${user.userID}/activities/heart/date/${date}/${range}.json`, {
         method: 'GET',
         headers: {
@@ -40,7 +40,8 @@ function fetchSingularHeartRatePeriod(user, period) {
     })
     .then( response => response.status === 200 ? response.json() : Promise.reject(response.statusText) )
     .then( data => {
-        data.user = user // Add the user to the data
+        data.user = user.shortHand() // Add the user to the data
+        console.log(data)
         return data
     })
     .catch(error => Promise.reject({ msg: error}))
@@ -79,7 +80,7 @@ function fetchSingleHeartRateRange(user, startDate, endDate) {
     })
     .then( response => response.status === 200 ? response.json() : Promise.reject(response.statusText) )
     .then( data => {
-        data.user = user
+        data.user = user.shortHand()
         return data
     })
     .catch( error => Promise.reject({ msg: error }))
