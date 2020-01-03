@@ -41,7 +41,6 @@ function fetchSingularHeartRatePeriod(user, period) {
     .then( response => response.status === 200 ? response.json() : Promise.reject(response.statusText) )
     .then( data => {
         data.user = user.shortHand() // Add the user to the data
-        console.log(data)
         return data
     })
     .catch(error => Promise.reject({ msg: error}))
